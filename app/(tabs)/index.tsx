@@ -4,31 +4,57 @@ import {
   ScrollView,
   StyleSheet,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
-import { Text, View } from '../../components/Themed';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import photoService from '../../services/photoService';
+import { View } from '../../components/Themed';
+import { useCallback, useEffect, useState } from 'react';
+import photoService, { PhotoParams } from '../../services/photoService';
+import { Link } from 'expo-router';
+// import { photos } from '../../constants/dummy';
 
 export default function TabOneScreen() {
-  const randomBool = useMemo(() => Math.random() < 0.5, []);
   const [photos, setPhotos] = useState<any>([]);
+  const [params, setParams] = useState<PhotoParams>({
+    per_page: 20,
+  });
+  const [refresh, setRefresh] = useState<boolean>(false);
 
-  const fetchAllPhotos = useCallback(() => {
-    photoService
-      .getAllPhotos()
-      .then((res) => setPhotos(res))
-      .catch((err) => console.log(err));
-  }, []);
+  const fetchAllPhotos = useCallback(
+    (param: PhotoParams) => {
+      setRefresh(true);
+      photoService
+        .getAllPhotos(param)
+        .then((res) => {
+          setRefresh(false);
+          setPhotos(res);
+        })
+        .catch((err) => {
+          setRefresh(false);
+          console.log(err);
+        });
+    },
+    [params]
+  );
 
   useEffect(() => {
-    fetchAllPhotos();
+    fetchAllPhotos(params);
   }, []);
 
   const numColumns = 2;
 
   const renderItem = ({ item }: any) => (
-    <Image source={item.urls.raw} style={[styles.image]} />
+    <Link href={`/photos/${item.id}`}>
+      <Image source={item.urls.raw} style={[styles.image]} />
+    </Link>
   );
+
+  const renderFooter = () => {
+    if (refresh) {
+      return <ActivityIndicator size='large' />;
+    } else {
+      return null;
+    }
+  };
 
   return (
     <ScrollView>
@@ -39,6 +65,13 @@ export default function TabOneScreen() {
           renderItem={renderItem}
           numColumns={numColumns}
           columnWrapperStyle={styles.columnWrapper}
+          onEndReached={() =>
+            setParams({
+              per_page: params.per_page + 20,
+            })
+          }
+          onEndReachedThreshold={0.75}
+          ListFooterComponent={renderFooter}
         />
       </View>
     </ScrollView>
@@ -48,18 +81,6 @@ export default function TabOneScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
   },
   columnWrapper: {
     flex: 1,
