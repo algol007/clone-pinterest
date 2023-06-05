@@ -2,18 +2,18 @@ import { httpClient } from "../libs/httpClient"
 
 export type PhotoParams = {
   per_page: number
-}
-
-export type RandomPhotoParams = {
-  count: number
+  query?: string
 }
 
 const photoService = {
   getAllPhotos(params: PhotoParams) {
     return httpClient.get('/photos', { params })
   },
-  getRandomPhotos(params: RandomPhotoParams) {
-    return httpClient.get('/photos/random', { params })
+  getRandomPhotos() {
+    return httpClient.get('/photos/random?count=30')
+  },
+  getSearchPhotos(params: PhotoParams) {
+    return httpClient.get('/search/photos', { params })
   },
   getPhotoDetail(id: string) {
     return httpClient.get(`/photos/${id}`)

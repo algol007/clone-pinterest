@@ -33,7 +33,7 @@ export default function TabLayout() {
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
-                    name='info-circle'
+                    name='user-circle'
                     size={25}
                     color={Colors[colorScheme ?? 'light'].text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
@@ -45,7 +45,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name='two'
+        name='search'
         options={{
           title: 'Search',
           tabBarIcon: ({ color }) => <TabBarIcon name='search' color={color} />,
