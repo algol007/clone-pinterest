@@ -6,6 +6,7 @@ import {
   Dimensions,
   ActivityIndicator,
   Animated,
+  Text,
 } from 'react-native';
 import { View } from '../../components/Themed';
 import { useCallback, useEffect, useState } from 'react';
@@ -40,18 +41,30 @@ export default function HomeScreen() {
     [params]
   );
 
+  useEffect(() => {
+    fetchAllPhotos(params);
+  }, []);
+
   const translateX = circleAnimatedValue.interpolate({
     inputRange: [0, 1],
     outputRange: [-10, Dimensions.get('window').width / 2 - 10],
   });
 
-  useEffect(() => {
-    fetchAllPhotos(params);
-  }, []);
-
   const renderItem = ({ item }: any) => (
-    <Link href={`/photos/${item.id}`}>
-      <Image source={item.urls.small} style={[styles.image]} />
+    <Link href={`/photos/${item.id}`} style={{ position: 'relative' }}>
+      <Image source={item.urls.regular} style={styles.image} />
+      <View style={styles.imageWrapper}>
+        <View style={{ padding: 5, backgroundColor: 'transparent' }}>
+          <Text style={{ color: '#FFFFFF', marginBottom: 5 }}>
+            {item.description?.length > 20
+              ? `${item.description?.slice(0, 20)}...`
+              : item.description}
+          </Text>
+          <Text style={{ color: '#FFFFFF', fontSize: 12 }}>
+            - {item.user.name}
+          </Text>
+        </View>
+      </View>
     </Link>
   );
 
@@ -86,12 +99,12 @@ export default function HomeScreen() {
             renderItem={renderItem}
             numColumns={2}
             columnWrapperStyle={styles.columnWrapper}
-            onEndReached={() =>
+            onEndReached={() => {
               setParams({
                 per_page: params.per_page + 20,
-              })
-            }
-            onEndReachedThreshold={30}
+              });
+            }}
+            onEndReachedThreshold={0.5}
             ListFooterComponent={renderFooter}
           />
         </View>
@@ -114,5 +127,14 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width / 2 - 10,
     height: 200,
     marginBottom: 5,
+    borderRadius: 5,
+  },
+  imageWrapper: {
+    position: 'absolute',
+    width: '100%',
+    height: 50,
+    left: 0,
+    bottom: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
 });
