@@ -7,12 +7,14 @@ import {
   ActivityIndicator,
   TextInput,
   Animated,
+  Text,
 } from 'react-native';
 import { View } from '../../components/Themed';
 import { useCallback, useEffect, useState } from 'react';
 import photoService, { PhotoParams } from '../../services/photoService';
 import { Link } from 'expo-router';
 import { Skeleton } from '../../components';
+import useDebounce from '../../hooks/useDebounce';
 
 export default function SearchScreen() {
   const circleAnimatedValue = new Animated.Value(0);
@@ -23,6 +25,19 @@ export default function SearchScreen() {
     per_page: 20,
     query: '',
   });
+
+  const circleAnimated = () => {
+    circleAnimatedValue.setValue(0);
+    Animated.timing(circleAnimatedValue, {
+      toValue: 1,
+      duration: 350,
+      useNativeDriver: false,
+    }).start(() => {
+      setTimeout(() => {
+        circleAnimated();
+      }, 1000);
+    });
+  };
 
   const fetchRandomPhotos = useCallback(() => {
     setRefresh(true);
@@ -39,36 +54,20 @@ export default function SearchScreen() {
       });
   }, []);
 
-  const searchPhotos = useCallback(
-    (param: PhotoParams) => {
-      setRefresh(true);
-      circleAnimated();
-      photoService
-        .getSearchPhotos(param)
-        .then((res) => {
-          setRefresh(false);
-          // @ts-ignore
-          setPhotos(res.results);
-        })
-        .catch((err) => {
-          setRefresh(false);
-          console.log(err);
-        });
-    },
-    [params]
-  );
-
-  const circleAnimated = () => {
-    circleAnimatedValue.setValue(0);
-    Animated.timing(circleAnimatedValue, {
-      toValue: 1,
-      duration: 350,
-      useNativeDriver: false,
-    }).start(() => {
-      setTimeout(() => {
-        circleAnimated();
-      }, 1000);
-    });
+  const searchPhotos = () => {
+    setRefresh(true);
+    circleAnimated();
+    photoService
+      .getSearchPhotos(params)
+      .then((res) => {
+        setRefresh(false);
+        // @ts-ignore
+        setPhotos(res.results);
+      })
+      .catch((err) => {
+        setRefresh(false);
+        console.log(err);
+      });
   };
 
   const translateX = circleAnimatedValue.interpolate({
@@ -84,8 +83,20 @@ export default function SearchScreen() {
   };
 
   const renderItem = ({ item }: any) => (
-    <Link href={`/photos/${item.id}`}>
-      <Image source={item.urls.small} style={[styles.image]} />
+    <Link href={`/photos/${item.id}`} style={{ position: 'relative' }}>
+      <Image source={item.urls.regular} style={styles.image} />
+      <View style={styles.imageWrapper}>
+        <View style={{ padding: 5, backgroundColor: 'transparent' }}>
+          <Text style={{ color: '#FFFFFF', marginBottom: 5 }}>
+            {item.description?.length > 20
+              ? `${item.description?.slice(0, 20)}...`
+              : item.description}
+          </Text>
+          <Text style={{ color: '#FFFFFF', fontSize: 12 }}>
+            - {item.user.name}
+          </Text>
+        </View>
+      </View>
     </Link>
   );
 
@@ -98,16 +109,14 @@ export default function SearchScreen() {
   };
 
   useEffect(() => {
-    const getData = setTimeout(() => {
-      if (params.query !== '') {
-        searchPhotos(params);
-      } else {
-        fetchRandomPhotos();
-      }
-    }, 2000);
+    fetchRandomPhotos();
+  }, []);
 
-    return () => clearTimeout(getData);
-  }, [params]);
+  useEffect(() => {
+    if (params.query !== '') {
+      searchPhotos();
+    }
+  }, [params.query]);
 
   return (
     <ScrollView>
@@ -178,5 +187,13 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width / 2 - 10,
     height: 200,
     marginBottom: 5,
+  },
+  imageWrapper: {
+    position: 'absolute',
+    width: '100%',
+    height: 50,
+    left: 0,
+    bottom: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
 });

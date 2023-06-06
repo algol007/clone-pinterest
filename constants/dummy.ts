@@ -9,7 +9,7 @@ export const photos = [
     blur_hash: "LoC%a7IoIVxZ_NM|M{s:%hRjWAo0",
     likes: 12,
     liked_by_user: false,
-    description: "A man drinking a coffee.",
+    description: "A man drinking a coffeasdasdadadse.",
     user: {
       id: "pXhwzz1JtQU",
       username: "poorkane",
@@ -48,11 +48,11 @@ export const photos = [
       // ... more collections
     ],
     urls: {
-      raw: "https://images.unsplash.com/face-springmorning.jpg",
+      raw: "https://images.unsplash.com/photo-1654157925394-4b7809721149?ixid=M3w0NTYzMzF8MHwxfGFsbHx8fHx8fHx8fDE2ODU3NzYyNTZ8\u0026ixlib=rb-4.0.3",
       full: "https://images.unsplash.com/photo-1654157925394-4b7809721149?crop=entropy\u0026cs=srgb\u0026fm=jpg\u0026ixid=M3w0NTYzMzF8MHwxfGFsbHx8fHx8fHx8fDE2ODU3NzYyNTZ8\u0026ixlib=rb-4.0.3\u0026q=85",
-      regular: "https://images.unsplash.com/face-springmorning.jpg?q=75&fm=jpg&w=1080&fit=max",
+      regular: "https://images.unsplash.com/photo-1654157925394-4b7809721149?crop=entropy\u0026cs=tinysrgb\u0026fit=max\u0026fm=jpg\u0026ixid=M3w0NTYzMzF8MHwxfGFsbHx8fHx8fHx8fDE2ODU3NzYyNTZ8\u0026ixlib=rb-4.0.3\u0026q=80\u0026w=1080",
       small: 'https://images.unsplash.com/face-springmorning.jpg?q=75&fm=jpg&w=400&fit=max',
-      thumb: "https://images.unsplash.com/face-springmorning.jpg?q=75&fm=jpg&w=200&fit=max"
+      thumb: "https://images.unsplash.com/photo-1654157925394-4b7809721149?crop=entropy\u0026cs=tinysrgb\u0026fit=max\u0026fm=jpg\u0026ixid=M3w0NTYzMzF8MHwxfGFsbHx8fHx8fHx8fDE2ODU3NzYyNTZ8\u0026ixlib=rb-4.0.3\u0026q=80\u0026w=200"
     },
     links: {
       self: "https://api.unsplash.com/photos/LBI7cgq3pbM",
